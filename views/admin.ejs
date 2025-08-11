@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <header class="navbar">
+    <button id="hamburgerBtn" class="hamburger-btn">☰</button>
+    <div class="welcome-msg">Welcome, <span id="userName"><%= user.name %></span> | <span>Super Admin</span></div>
+    <div class="nav-right">
+      <button id="themeToggle" class="theme-toggle-btn"><i class="fas fa-moon"></i></button>
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" id="profileBtn" class="avatar" />
+    </div>
+  </header>
+
+  <aside id="sidebar" class="sidebar">
+    <h4 class="nav-title">Navigation</h4>
+    <ul class="sidebar-menu">
+      <li class="active" data-section="newUsers">New Users</li>
+      <li data-section="userList">User List</li>
+      <li data-section="itemList">Item List</li>
+
+    </ul>
+  </aside>
+
+  <!-- Profile Panel -->
+  <aside id="profilePanel" class="profile-panel">
+    <div class="profile-header">
+      <h3 class="profile-title">My Profile</h3>
+      <button class="close-btn" id="closeProfile">×</button>
+    </div>
+    <div class="profile-content">
+      <div class="profile-info">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="avatar-large" />
+      </div>
+      <div class="profile-details">
+        <div class="detail-item">
+          <span class="detail-label">Name:</span>
+          <span class="detail-value"><%= user.name %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Email:</span>
+          <span class="detail-value"><%= user.email %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Role:</span>
+          <span class="detail-value">Super Admin</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Last Login:</span>
+          <span class="detail-value"><%= new Date().toLocaleString() %></span>
+        </div>
+      </div>
+      <div class="editable-fields">
+        <div class="form-group">
+          <label for="designationInput">Designation</label>
+          <span class="detail-value" id="designationValue"><%= user.designation %></span>
+          <input type="text" id="designationInput" class="edit-input" style="display: none;" value="<%= user.designation %>">
+        </div>
+        <div class="password-section">
+          <h4>Change Password</h4>
+          <div class="password-fields" id="passwordFields" style="display: none;">
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <input type="password" id="currentPassword" placeholder="Enter current password">
+            </div>
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <input type="password" id="newPassword" placeholder="Enter new password">
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password</label>
+              <input type="password" id="confirmPassword" placeholder="Confirm new password">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <button id="logoutBtn" class="logout">Logout</button>
+        <button id="editProfile" class="edit-profile">Edit</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- User Approval Modal -->
+  <div id="approvalModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>User Approval</h3>
+        <button class="close-btn" id="closeApprovalModal">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="userApprovalDetails">
+          <!-- User details will be populated here -->
+        </div>
+        <div class="modal-actions">
+          <button id="approveUserBtn" class="btn approve">Approve</button>
+          <button id="rejectUserBtn" class="btn reject">Reject</button>
+          <button id="cancelApprovalBtn" class="btn cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Role Assignment Modal -->
+  <div id="roleModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Assign Role</h3>
+        <button class="close-btn" id="closeRoleModal">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="roleAssignmentForm">
+          <div class="form-group">
+            <label for="roleSelect">Select Role</label>
+            <select id="roleSelect" required>
+              <option value="">Select Role</option>
+              <option value="user">Regular User</option>
+              <option value="inventory_holder">Inventory Holder</option>
+              <option value="admin">Administrator</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" id="cancelRoleBtn" class="btn cancel">Cancel</button>
+            <button type="submit" class="btn submit">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <main class="content" id="mainContent">
+    <!-- New Users Section -->
+    <section id="newUsersSection" class="tab-content active">
+      <div class="section-header">
+        <h2>New User Requests</h2>
+        <div class="search-container">
+          <input type="text" id="searchNewUsers" placeholder="Search new users..." class="search-input" />
+          <button class="search-btn"><i class="fas fa-search"></i></button>
+          <button id="exportNewUsersBtn" class="export-btn">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>S.No.</th>
+              <th>Full Name</th>
+              <th>User ID</th>
+              <th>Email</th>
+              <th>Group</th>
+              <th>Designation</th>
+              <th>Registration Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="newUsersTableBody">
+            <% pendingUsers.forEach((user, index) => { %>
+              <tr data-id="<%= user._id %>">
+                <td><%= index + 1 %></td>
+                <td><%= user.name %></td>
+                <td><%= user.userId %></td>
+                <td><%= user.email %></td>
+                <td><%= user.group %></td>
+                <td><%= user.designation %></td>
+                <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+                <td>
+                  <button class="action-btn view-btn" data-id="<%= user._id %>">
+                    <i class="fas fa-eye"></i> Review
+                  </button>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- User List Section -->
+    <section id="userListSection" class="tab-content">
+      <div class="section-header">
+        <h2>User Management</h2>
+        <div class="search-container">
+          <input type="text" id="searchUserList" placeholder="Search users..." class="search-input" />
+          <button class="search-btn"><i class="fas fa-search"></i></button>
+          <button id="exportUserListBtn" class="export-btn">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>S.No.</th>
+              <th>Name</th>
+              <th>User ID</th>
+              <th>Group</th>
+              <th>Designation</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userListTableBody">
+            <% approvedUsers.forEach((user, index) => { %>
+              <tr data-id="<%= user._id %>">
+                <td><%= index + 1 %></td>
+                <td><%= user.name %></td>
+                <td><%= user.userId %></td>
+                <td><%= user.group %></td>
+                <td><%= user.designation %></td>
+                <td><%= user.role %></td>
+                <td><%= user.status %></td>
+                <td>
+                  <button class="action-btn role-btn" data-id="<%= user._id %>">
+                    <i class="fas fa-user-cog"></i> Role
+                  </button>
+                  <button class="action-btn delete-btn" data-id="<%= user._id %>">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Item List Section -->
+    <section id="itemListSection" class="tab-content">
+      <div class="section-header">
+        <h2>System Items</h2>
+        <div class="search-container">
+          <input type="text" id="searchItemList" placeholder="Search items..." class="search-input" />
+          <button class="search-btn"><i class="fas fa-search"></i></button>
+          <button id="exportItemListBtn" class="export-btn">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>S.No.</th>
+              <th>Ledger No.</th>
+              <th>Item Name</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Group</th>
+              
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="itemListTableBody">
+            <% items.forEach((item, index) => { %>
+              <tr data-id="<%= item._id %>">
+                <td><%= index + 1 %></td>
+                <td><%= item.ledgerNo %></td>
+                <td><%= item.itemName %></td>
+                <td><%= item.quantity %></td>
+                <td><%= item.unit %></td>
+                <td><%= item.group %></td>
+                <td>
+                  <button class="action-btn edit-btn" data-id="<%= item._id %>">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="action-btn delete-btn" data-id="<%= item._id %>">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    
+  </main>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
