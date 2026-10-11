@@ -235,6 +235,4 @@ Before deploying this application:
 
 This repository should be treated as a development project until these controls have been reviewed and tested.
 
-## License
 
-No license file was included in the supplied project listing. Add a `LICENSE` file if you plan to distribute or open-source the project.
