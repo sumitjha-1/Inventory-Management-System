@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="/css/user.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <header class="navbar">
+    <button id="hamburgerBtn" class="hamburger-btn">☰</button>
+    
+    <div class="welcome-msg">Welcome, <span id="userName"><%= user.name %></span> | <span id="userGroup"><%= user.group %></span><span> , User</span></div>
+    <div class="nav-right">
+      <button id="themeToggle" class="theme-toggle-btn"><i class="fas fa-moon"></i></button>
+      <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" id="profileBtn" class="avatar" />
+    </div>
+  </header>
+
+  <aside id="sidebar" class="sidebar">
+    <h4 class="nav-title">Navigation</h4>
+    <ul class="sidebar-menu">
+      <li class="active" data-section="items">Item List</li>
+    </ul>
+  </aside>
+
+  <aside id="profilePanel" class="profile-panel">
+    <div class="profile-header">
+      <h3 class="profile-title">My Profile</h3>
+      <button class="close-btn" id="closeProfile">×</button>
+    </div>
+    <div class="profile-content">
+      <div class="profile-info">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="avatar-large" />
+      </div>
+      <div class="profile-details">
+        <div class="detail-item">
+          <span class="detail-label">Name:</span>
+          <span class="detail-value" id="profileName"><%= user.name %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Group:</span>
+          <span class="detail-value" id="profileGroup"><%= user.group %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">DOB:</span>
+          <span class="detail-value" id="profileDob"><%= user.dob ? new Date(user.dob).toLocaleDateString() : 'Not specified' %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Email:</span>
+          <span class="detail-value" id="profileEmail"><%= user.email %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Employee Type:</span>
+          <span class="detail-value" id="profileEmploymentType"><%= user.employmentType %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Role:</span>
+          <span class="detail-value" id="profileRole"><%= user.role %></span>
+        </div>
+      </div>
+      <div class="editable-fields">
+        <div class="form-group">
+          <label for="designationInput">Designation</label>
+          <input type="text" id="designationInput" value="<%= user.designation %>" disabled>
+        </div>
+        <div class="password-section">
+          <h4>Change Password</h4>
+          <div class="password-fields" id="passwordFields" style="display: none;">
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <input type="password" id="currentPassword" placeholder="Enter current password">
+            </div>
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <input type="password" id="newPassword" placeholder="Enter new password">
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password</label>
+              <input type="password" id="confirmPassword" placeholder="Confirm new password">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <button id="logoutBtn" class="logout">Logout</button>
+        <button id="editProfile">Edit</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content" id="mainContent">
+    <section id="itemsSection" class="tab-content active">
+      <div class="section-header">
+        <h2>Issued Items</h2>
+        <div class="search-container">
+          <input type="text" id="searchItems" placeholder="Search items..." class="search-input" />
+          <button class="search-btn"><i class="fas fa-search"></i></button>
+          <button id="exportBtn" class="export-btn">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Serial No.</th>
+              <th>Ledger No.</th>
+              <th>Item Name</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Issued Date</th>
+            </tr>
+          </thead>
+          <tbody id="itemsTableBody">
+            <% items.forEach((item, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= item.ledgerNo %></td>
+                <td><%= item.itemName %></td>
+                <td><%= item.quantity %></td>
+                <td><%= item.unit %></td>
+                <td><%= new Date(item.issuedDate).toLocaleDateString() %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/user.js"></script>
+</body>
+</html>

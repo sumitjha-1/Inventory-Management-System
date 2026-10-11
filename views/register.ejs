@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Management – Register</title>
+  <link rel="stylesheet" href="/css/register.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="theme-toggle">
+    <button id="themeToggle"><i class="fas fa-moon"></i></button>
+  </div>
+
+  <div class="auth-container">
+    <div class="header">
+      <h1>Inventory Management System</h1>
+      <h3>Employee Registration</h3>
+    </div>
+    
+    <% if (errorMessage) { %>
+      <div class="alert alert-error">
+        <%= errorMessage %>
+      </div>
+    <% } %>
+    <% if (successMessage) { %>
+      <div class="alert alert-success">
+        <%= successMessage %>
+      </div>
+    <% } %>
+
+    <form id="registerForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="regName">Full Name</label>
+          <input type="text" id="regName" name="name" placeholder="Enter full name" required>
+          <div class="error" id="nameError"></div>
+        </div>
+        
+        <div class="form-group">
+          <label for="regUserId">User ID</label>
+          <input type="text" id="regUserId" name="userId" placeholder="6-digit numeric ID" required>
+          <div class="error" id="userIdError"></div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" id="gender-container">
+          <label>Gender</label>
+          <div class="radio-group">
+            <label><input type="radio" name="gender" value="male" required> Male</label>
+            <label><input type="radio" name="gender" value="female"> Female</label>
+            <label><input type="radio" name="gender" value="other"> Other</label>
+          </div>
+          <div class="error" id="genderError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="dob">Date of Birth</label>
+          <input type="date" id="dob" name="dob" required>
+          <div class="error" id="dobError"></div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" placeholder="10-digit number" required>
+          <div class="error" id="phoneError"></div>
+        </div>
+        
+        <div class="form-group">
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" name="email" placeholder="your.email@example.com" required>
+          <div class="error" id="emailError"></div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" id="employment-container">
+          <label>Employment Type</label>
+          <div class="radio-group">
+            <label><input type="radio" name="employmentType" value="permanent" required> Permanent</label>
+            <label><input type="radio" name="employmentType" value="temporary"> Temporary</label>
+          </div>
+          <div class="error" id="employmentError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="group">Group</label>
+          <select id="group" name="group" required>
+            <option value="">Select Group</option>
+            <option value="DIR SECT">DIR SECT</option>
+            <option value="FSEG">FSEG</option>
+            <option value="IT">IT</option>
+            <option value="QRS">QRS</option>
+            <option value="PCM">PCM</option>
+            <option value="PSEG">PSEG</option>
+            <option value="MMG">MMG</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="FINANCE">FINANCE</option>
+            <option value="MT">MT</option>
+            <option value="SECURITY">SECURITY</option>
+            <option value="TFA">TFA</option>
+            <option value="CAL">CAL</option>
+            <option value="SARC">SARC</option>
+            <option value="ESRG">ESRG</option>
+            <option value="FC&HB">FC&HB</option>
+          </select>
+          <div class="error" id="groupError"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="cadre">Cadre</label>
+        <select id="cadre" name="cadre" required>
+          <option value="">Select Cadre</option>
+          <option value="drds">DRDS (Scientist)</option>
+          <option value="drtc">DRTC (Technician Officer)</option>
+          <option value="admin">Administration Allied</option>
+        </select>
+        <div class="error" id="cadreError"></div>
+      </div>
+
+      <div id="designation-container" class="cadre-options" style="display: none;">
+        <div class="form-group">
+          <label for="designation">Designation</label>
+          <select id="designation" name="designation" required>
+            <option value="">Select Designation</option>
+            <!-- Options will be populated dynamically -->
+          </select>
+          <div class="error" id="designationError"></div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <input type="password" id="regPassword" name="password" placeholder="Create password" required>
+          <div class="error" id="passwordError"></div>
+        </div>
+        
+        <div class="form-group">
+          <label for="regConfirmPassword">Confirm Password</label>
+          <input type="password" id="regConfirmPassword" name="confirmPassword" placeholder="Confirm password" required>
+          <div class="error" id="confirmPasswordError"></div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="register-btn">Register</button>
+      </div>
+    </form>
+
+    <div class="login-prompt">
+      <p>Already have an account? <a href="/login">Login here</a></p>
+    </div>
+  </div>
+
+  <script src="/js/register.js"></script>
+</body>
+</html>

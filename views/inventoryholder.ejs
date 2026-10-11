@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Holder Dashboard</title>
+  <link rel="stylesheet" href="/css/inventoryholder.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <header class="navbar">
+    <button id="hamburgerBtn" class="hamburger-btn">☰</button>
+    <div class="welcome-msg">Welcome, <span id="userName"><%= user.name %></span> | <span id="userGroup"><%= user.group %></span><span> , Inventory Holder</span></div>
+    <div class="nav-right">
+      <button id="themeToggle" class="theme-toggle-btn"><i class="fas fa-moon"></i></button>
+      <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" id="profileBtn" class="avatar" />
+    </div>
+  </header>
+
+  <aside id="sidebar" class="sidebar">
+    <h4 class="nav-title">Navigation</h4>
+    <ul class="sidebar-menu">
+      <li class="active" data-section="items">Item List</li>
+      <li data-section="deleted">Deleted List</li>
+      <li data-section="condemned">Condemn List</li>
+    </ul>
+  </aside>
+
+  <aside id="profilePanel" class="profile-panel">
+    <div class="profile-header">
+      <h3 class="profile-title">My Profile</h3>
+      <button class="close-btn" id="closeProfile">×</button>
+    </div>
+    <div class="profile-content">
+      <div class="profile-info">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="avatar-large" />
+      </div>
+      <div class="profile-details">
+        <div class="detail-item">
+          <span class="detail-label">Name:</span>
+          <span class="detail-value"><%= user.name %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Group:</span>
+          <span class="detail-value"><%= user.group %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">DOB:</span>
+          <span class="detail-value"><%= user.dob ? new Date(user.dob).toLocaleDateString() : 'Not specified' %></span>        </div>
+        <div class="detail-item">
+          <span class="detail-label">Email:</span>
+          <span class="detail-value"><%= user.email %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Employee Type:</span>
+          <span class="detail-value"><%= user.employmentType === 'permanent' ? 'Permanent' : 'Temporary' %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Role:</span>
+          <span class="detail-value">Inventory Holder</span>
+        </div>
+      </div>
+      <div class="editable-fields">
+        <div class="form-group">
+          <label for="designationInput">Designation</label>
+          <input type="text" id="designationInput" value="<%= user.designation %>" disabled>
+        </div>
+        <div class="password-section">
+          <h4>Change Password</h4>
+          <div class="password-fields" id="passwordFields" style="display: none;">
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <input type="password" id="currentPassword" placeholder="Enter current password">
+            </div>
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <input type="password" id="newPassword" placeholder="Enter new password">
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password</label>
+              <input type="password" id="confirmPassword" placeholder="Confirm new password">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <button id="logoutBtn" class="logout">Logout</button>
+        <button id="editProfile">Edit</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Add Item Modal -->
+  <div id="addItemModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add New Item</h3>
+        <button class="close-btn" id="closeAddItemModal">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="addItemForm">
+          <div class="form-group">
+            <label for="ledgerNo">Ledger No</label>
+            <input type="text" id="ledgerNo" required>
+            <div class="error" id="ledgerNoError"></div>
+          </div>
+          <div class="form-group">
+            <label for="itemName">Item Name</label>
+            <input type="text" id="itemName" required>
+            <div class="error" id="itemNameError"></div>
+          </div>
+          <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" min="1" required>
+            <div class="error" id="quantityError"></div>
+          </div>
+          <div class="form-group">
+            <label for="unit">Unit</label>
+            <select id="unit" required>
+              <option value="">Select Unit</option>
+              <option value="kg">kg</option>
+              <option value="dozen">dozen</option>
+              <option value="packet">packet</option>
+              <option value="box">box</option>
+              <option value="piece">piece</option>
+              <option value="pairs">pairs</option>
+            </select>
+            <div class="error" id="unitError"></div>
+          </div>
+          <div class="form-group">
+            <label for="procurementDate">Procurement Date</label>
+            <input type="date" id="procurementDate" required>
+            <div class="error" id="procurementDateError"></div>
+          </div>
+          <div class="form-group">
+            <label for="custodian">Custodian (Optional)</label>
+            <select id="custodian">
+              <option value="">Select Custodian</option>
+              <% groupUsers.forEach(user => { %>
+                <option value="<%= user._id %>"><%= user.name %> (<%= user.designation %>)</option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" id="cancelAddItem" class="btn cancel">Cancel</button>
+            <button type="submit" class="btn submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue Item Modal -->
+  <div id="issueItemModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Assign Custodian</h3>
+        <button class="close-btn" id="closeIssueModal">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="issueItemForm">
+          <div class="form-group">
+            <label for="issueTo">Assign To</label>
+            <select id="issueTo" required>
+              <option value="">Select User</option>
+              <% groupUsers.forEach(user => { %>
+                <option value="<%= user._id %>"><%= user.name %> (<%= user.designation %>)</option>
+              <% }); %>
+            </select>
+            <div class="error" id="issueToError"></div>
+          </div>
+          <div class="form-actions">
+            <button type="button" id="cancelIssueItem" class="btn cancel">Cancel</button>
+            <button type="submit" class="btn submit">Assign Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Item Modal -->
+  <div id="editItemModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Item</h3>
+        <button class="close-btn" id="closeEditItemModal">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="editItemForm">
+          <input type="hidden" id="editItemId">
+          <div class="form-group">
+            <label for="editLedgerNo">Ledger No</label>
+            <input type="text" id="editLedgerNo" required>
+            <div class="error" id="editLedgerNoError"></div>
+          </div>
+          <div class="form-group">
+            <label for="editItemName">Item Name</label>
+            <input type="text" id="editItemName" required>
+            <div class="error" id="editItemNameError"></div>
+          </div>
+          <div class="form-group">
+            <label for="editQuantity">Quantity</label>
+            <input type="number" id="editQuantity" min="1" required>
+            <div class="error" id="editQuantityError"></div>
+          </div>
+          <div class="form-group">
+            <label for="editUnit">Unit</label>
+            <select id="editUnit" required>
+              <option value="">Select Unit</option>
+              <option value="kg">kg</option>
+              <option value="dozen">dozen</option>
+              <option value="packet">packet</option>
+              <option value="box">box</option>
+              <option value="piece">piece</option>
+              <option value="pairs">pairs</option>
+            </select>
+            <div class="error" id="editUnitError"></div>
+          </div>
+          <div class="form-group">
+            <label for="editProcurementDate">Procurement Date</label>
+            <input type="date" id="editProcurementDate" required>
+            <div class="error" id="editProcurementDateError"></div>
+          </div>
+          <div class="form-group">
+            <label for="editCustodian">Custodian</label>
+            <select id="editCustodian">
+              <option value="">Select Custodian</option>
+              <% groupUsers.forEach(user => { %>
+                <option value="<%= user._id %>"><%= user.name %> (<%= user.designation %>)</option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" id="cancelEditItem" class="btn cancel">Cancel</button>
+            <button type="submit" class="btn submit">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <main class="content" id="mainContent">
+    <!-- Item List Section -->
+    <section id="itemsSection" class="tab-content active">
+      <div class="section-header">
+        <h2>Item List</h2>
+        <div class="search-container">
+          <input type="text" id="searchItems" placeholder="Search items..." class="search-input" />
+          <button class="search-btn"><i class="fas fa-search"></i></button>
+          <button id="exportItemsBtn" class="export-btn">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+        </div>
+      </div>
+      <div class="add-item-container">
+        <button id="addItemBtn" class="add-btn">
+          <i class="fas fa-plus"></i> Add Item
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th class="condemn-checkbox-col"></th>
+              <th>Serial No.</th>
+              <th>Ledger No.</th>
+              <th>Item Name</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Procurement Date</th>
+              <th>Custodian</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <<tbody id="itemsTableBody">
+  <% availableItems.forEach((item, index) => { %>
+    <tr data-id="<%= item._id %>" data-status="<%= item.status %>">
+      <td class="condemn-checkbox-col">
+        <input type="checkbox" class="condemn-checkbox" data-id="<%= item._id %>">
+      </td>
+      <td><%= index + 1 %></td>
+      <td><%= item.ledgerNo %></td>
+      <td><%= item.itemName %></td>
+      <td><%= item.quantity %></td>
+      <td><%= item.unit %></td>
+      <td><%= new Date(item.procurementDate).toLocaleDateString() %></td>
+      <td>
+        <% if (item.custodian) { %>
+          <%= item.custodian.name %> (<%= item.custodian.designation %>)
+        <% } else { %>
+          -
+        <% } %>
+      </td>
+      <td><%= item.status %></td>
+      <td>
+        <% if (!item.custodian) { %>
+          <button class="action-btn issue-btn" data-id="<%= item._id %>">
+            <i class="fas fa-share-square"></i> Assign
+          </button>
+        <% } %>
+        <button class="action-btn edit-btn" data-id="<%= item._id %>">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="action-btn delete-btn" data-id="<%= item._id %>">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </td>
+    </tr>
+  <% }); %>
+</tbody>
+        </table>
+      </div>
+      <button id="condemnItemsBtn" class="condemn-btn">
+        <i class="fas fa-trash-alt"></i> Condemn Items
+      </button>
+      <div class="table-actions" id="condemnActions" style="display: none;">
+        <button id="cancelCondemnBtn" class="cancel-btn">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button id="submitCondemnBtn" class="submit-condemn-btn">
+          <i class="fas fa-check"></i> Submit Condemnation
+        </button>
+      </div>
+    </section>
+
+    <!-- Deleted List Section -->
+    <section id="deletedSection" class="tab-content">
+      <div class="section-header">
+        <h2>Deleted List</h2>
+        <div class="search-container">
+          <input type="text" id="searchDeleted" placeholder="Search deleted items..." class="search-input" />
+          <button class="search-btn"><i class="fas fa-search"></i></button>
+          <button id="exportDeletedBtn" class="export-btn">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Serial No.</th>
+              <th>Ledger No.</th>
+              <th>Item Name</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Procurement Date</th>
+              <th>Deleted Date</th>
+              <th>Last Custodian</th>
+            </tr>
+          </thead>
+          <tbody id="deletedTableBody">
+            <% deletedItems.forEach((item, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= item.ledgerNo %></td>
+                <td><%= item.itemName %></td>
+                <td><%= item.quantity %></td>
+                <td><%= item.unit %></td>
+                <td><%= new Date(item.procurementDate).toLocaleDateString() %></td>
+                <td><%= new Date(item.deletedAt).toLocaleDateString() %></td>
+                <td>
+                  <% if (item.custodian) { %>
+                    <%= item.custodian.name %>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Condemn List Section -->
+    <section id="condemnedSection" class="tab-content">
+      <div class="section-header">
+        <h2>Condemn List</h2>
+        <div class="search-container">
+          <input type="text" id="searchCondemned" placeholder="Search condemned items..." class="search-input" />
+          <button class="search-btn"><i class="fas fa-search"></i></button>
+          <button id="exportCondemnedBtn" class="export-btn">
+            <i class="fas fa-file-excel"></i> Excel
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Serial No.</th>
+              <th>Ledger No.</th>
+              <th>Item Name</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Procurement Date</th>
+              <th>Condemn Date</th>
+              <th>Last Custodian</th>
+            </tr>
+          </thead>
+          <tbody id="condemnedTableBody">
+            <% condemnedItems.forEach((item, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= item.ledgerNo %></td>
+                <td><%= item.itemName %></td>
+                <td><%= item.quantity %></td>
+                <td><%= item.unit %></td>
+                <td><%= new Date(item.procurementDate).toLocaleDateString() %></td>
+                <td><%= new Date(item.condemnedAt).toLocaleDateString() %></td>
+                <td>
+                  <% if (item.custodian) { %>
+                    <%= item.custodian.name %>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/inventoryholder.js"></script>
+</body>
+</html>
